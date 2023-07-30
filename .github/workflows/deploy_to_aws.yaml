@@ -12,7 +12,9 @@ jobs:
       - name: File Creation
         run: timedatectl > temp_file
       - name: Write the ssh-key
-        run: echo '${{ secrets.SSH_PRIVATE_KEY }}' > private_key
+        run: |
+              echo '${{ secrets.SSH_PRIVATE_KEY }}' > private_key
+              chmod 600 private_key
       - name: Verify file existence
         run: |
               cat temp_file
