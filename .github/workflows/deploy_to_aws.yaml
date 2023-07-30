@@ -1,6 +1,8 @@
 name: Deploy some data to AWS Lightsail
 
 on:
+  push:
+    branches: ["main"]
   workflow_dispatch: 
 
 jobs:
@@ -10,6 +12,6 @@ jobs:
       - name: File Creation
         run: timedatectl > temp_file
       - name: Write the ssh-key
-        run: echo ${{ secrets.SSH_PRIVATE_KEY }} > private_key
+        run: echo `${{ secrets.SSH_PRIVATE_KEY }}` > private_key
       - name: Copy file to AWS
         run: scp -i private_key temp_file ${{ vars.SERVER_HOSTNAME }}@${{ vars.SERVER_IP }}:{{ vars.SERVER_HOME }}
