@@ -18,4 +18,4 @@ jobs:
               cat temp_file
               wc private_key
       - name: Copy file to AWS
-        run: scp -i private_key temp_file ${{ vars.SERVER_HOSTNAME }}@${{ vars.SERVER_IP }}:{{ vars.SERVER_HOME }}
+        run: scp -i private_key temp_file ${{ vars.SERVER_HOSTNAME }}@${{ vars.SERVER_IP }}:${{ vars.SERVER_HOME }}
