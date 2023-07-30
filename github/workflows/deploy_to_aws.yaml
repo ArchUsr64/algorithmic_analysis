@@ -1,0 +1,15 @@
+name: Deploy some data to AWS Lightsail
+
+on:
+  workflow_dispatch: 
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: File Creation
+        run: timedatectl > temp_file
+      - name: Write the ssh-key
+        run: echo ${{ secrets.SSH_PRIVATE_KEY }} > private_key
+      - name: Copy file to AWS
+        run: scp -i private_key temp_file ${{ secrets.SERVER_HOSTNAME }}@${{ secrets.SERVER_IP }}:{{ secrets.SERVER_HOME }}
