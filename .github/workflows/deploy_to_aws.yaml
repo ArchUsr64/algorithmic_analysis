@@ -13,8 +13,9 @@ jobs:
         run: timedatectl > temp_file
       - name: Write the ssh-key
         run: echo '${{ secrets.SSH_PRIVATE_KEY }}' > private_key
-      - name: Verify file exitence
-        run: cat temp_file
-             wc private_key
+      - name: Verify file existence
+        run: |
+              cat temp_file
+              wc private_key
       - name: Copy file to AWS
         run: scp -i private_key temp_file ${{ vars.SERVER_HOSTNAME }}@${{ vars.SERVER_IP }}:{{ vars.SERVER_HOME }}
