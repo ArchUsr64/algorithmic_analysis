@@ -1,5 +1,5 @@
 #![feature(is_sorted)]
-use std::time;
+use std::{io, time};
 
 fn bubble_sort(arr: &mut [i32]) {
     let len = arr.len();
@@ -44,9 +44,36 @@ where
     times[runs / 2]
 }
 
+fn generate_report<T>(
+    output: &mut T,
+    sample_points: &[usize],
+    algorithm_name: (&'static str, &'static str),
+    execution_times: &[(u128, u128)],
+) where
+    T: io::Write,
+{
+    writeln!(output, "{} vs {}", algorithm_name.0, algorithm_name.1).unwrap();
+    for (n, (time_1, time_2)) in sample_points.iter().zip(execution_times.iter()) {
+        writeln!(output, "{n}\t{time_1}\t{time_2}").unwrap();
+    }
+}
+
 fn main() {
-    let n = 10_000;
-    let runs = 5;
-    println!("Std sort: \t{}", benchmark_sorting(n, runs, |x| x.sort()));
-    println!("Bubble sort: \t{}", benchmark_sorting(n, runs, bubble_sort));
+    let sample_points = [10, 100, 1000, 10_000];
+    let mut execution_times = Vec::new();
+    let algorithm_name = ("Standard Sort", "Bubble Sort");
+    let runs = 3;
+    for n in sample_points {
+        let temp_output = (
+            benchmark_sorting(n, runs, |x| x.sort()),
+            benchmark_sorting(n, runs, bubble_sort),
+        );
+        execution_times.push(temp_output);
+    }
+    generate_report(
+        &mut io::stdout(),
+        &sample_points,
+        algorithm_name,
+        &execution_times,
+    );
 }
