@@ -18,6 +18,8 @@ jobs:
               override: true
       - name: Algorithm Execution
         run: cargo run --release
+      - name: Install python dependencies
+        run: pip install matplotlib
       - name: Graph Creation
         run: python generate_graph.py
       - name: Write the ssh-key
