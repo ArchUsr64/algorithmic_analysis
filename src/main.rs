@@ -90,9 +90,9 @@ fn generate_report<T>(
 ) where
     T: io::Write,
 {
-    writeln!(output, "{} vs {}", algorithm_name.0, algorithm_name.1).unwrap();
+    writeln!(output, "N,{},{}", algorithm_name.0, algorithm_name.1).unwrap();
     for (n, (time_1, time_2)) in sample_points.iter().zip(execution_times.iter()) {
-        writeln!(output, "{n}\t{time_1}\t{time_2}").unwrap();
+        writeln!(output, "{n},{time_1},{time_2}").unwrap();
     }
 }
 
