@@ -12,6 +12,44 @@ fn bubble_sort(arr: &mut [i32]) {
     }
 }
 
+fn merge_sort(arr: &mut [i32]) {
+    fn merge(left: Vec<i32>, right: Vec<i32>) -> Vec<i32> {
+        let mut result = Vec::with_capacity(left.len() + right.len());
+        let mut left = left;
+        let mut right = right;
+        while !(left.is_empty() || right.is_empty()) {
+            result.push(if left.first().unwrap() < right.first().unwrap() {
+                left.remove(0)
+            } else {
+                right.remove(0)
+            })
+        }
+        while !left.is_empty() {
+            result.push(left.remove(0));
+        }
+        while !right.is_empty() {
+            result.push(right.remove(0));
+        }
+        result
+    }
+    fn merge_recurse(arr: Vec<i32>) -> Vec<i32> {
+        let len = arr.len();
+        if len <= 1 {
+            arr
+        } else if len == 2 {
+            vec![arr[0].min(arr[1]), arr[1].max(arr[0])]
+        } else {
+            let left = arr[..len / 2].to_vec();
+            let right = arr[len / 2..].to_vec();
+            merge(merge_recurse(left), merge_recurse(right))
+        }
+    }
+    let result = merge_recurse(arr.to_vec());
+    arr.iter_mut()
+        .enumerate()
+        .for_each(|(i, value)| *value = result[i]);
+}
+
 fn lfsr_fib() -> i32 {
     const START_STATE: i32 = 0xAFD2;
     static mut LFSR: i32 = START_STATE;
@@ -61,11 +99,11 @@ fn generate_report<T>(
 fn main() {
     let sample_points = [10, 100, 1000, 10_000];
     let mut execution_times = Vec::new();
-    let algorithm_name = ("Standard Sort", "Bubble Sort");
+    let algorithm_name = ("Merge sort", "Bubble sort");
     let runs = 3;
     for n in sample_points {
         let temp_output = (
-            benchmark_sorting(n, runs, |x| x.sort()),
+            benchmark_sorting(n, runs, merge_sort),
             benchmark_sorting(n, runs, bubble_sort),
         );
         execution_times.push(temp_output);
