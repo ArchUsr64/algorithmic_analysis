@@ -12,7 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Algorithm Execution
-      - name: cargo run --release
+      - run: cargo run --release
       - name: Graph Creation
       - run: python generate_graph.py
       - name: Write the ssh-key
