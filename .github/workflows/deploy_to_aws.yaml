@@ -9,11 +9,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps: 
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Algorithm Execution
-      - run: cargo run --release
+        run: cargo run --release
       - name: Graph Creation
-      - run: python generate_graph.py
+        run: python generate_graph.py
       - name: Write the ssh-key
         run: |
               echo '${{ secrets.SSH_PRIVATE_KEY }}' > private_key
