@@ -1,5 +1,8 @@
 #![feature(is_sorted)]
-use std::{io, time};
+#![feature(file_create_new)]
+use std::{fs, io, time};
+
+const OUT_PATH: &'static str = "data.csv";
 
 fn bubble_sort(arr: &mut [i32]) {
     let len = arr.len();
@@ -97,7 +100,20 @@ fn generate_report<T>(
 }
 
 fn main() {
-    let sample_points = [10, 100, 1000, 10_000];
+    let output = &mut loop {
+        match fs::File::create_new(OUT_PATH) {
+            Ok(file_stream) => break file_stream,
+            Err(e) => match e.kind() {
+                io::ErrorKind::AlreadyExists => {
+                    eprintln!("'{OUT_PATH}' already exists, will be removed!");
+                    fs::remove_file(OUT_PATH).unwrap();
+                    continue;
+                }
+                _ => panic!("{e:?}"),
+            },
+        }
+    };
+    let sample_points = [10, 20, 40, 80, 100, 1_000, 2_000, 4_000, 8_000, 10_000];
     let mut execution_times = Vec::new();
     let algorithm_name = ("Merge sort", "Bubble sort");
     let runs = 3;
@@ -108,10 +124,5 @@ fn main() {
         );
         execution_times.push(temp_output);
     }
-    generate_report(
-        &mut io::stdout(),
-        &sample_points,
-        algorithm_name,
-        &execution_times,
-    );
+    generate_report(output, &sample_points, algorithm_name, &execution_times);
 }
