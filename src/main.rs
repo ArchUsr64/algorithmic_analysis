@@ -2,9 +2,11 @@
 #![feature(file_create_new)]
 use std::{fs, io, time};
 
+type Int = usize;
+
 const OUT_PATH: &'static str = "data.csv";
 
-fn bubble_sort(arr: &mut [i32]) {
+fn bubble_sort(arr: &mut [Int]) {
     let len = arr.len();
     for i in 0..len {
         for j in 0..(len - 1 - i) {
@@ -15,8 +17,8 @@ fn bubble_sort(arr: &mut [i32]) {
     }
 }
 
-fn merge_sort(arr: &mut [i32]) {
-    fn merge(left: Vec<i32>, right: Vec<i32>) -> Vec<i32> {
+fn merge_sort(arr: &mut [Int]) {
+    fn merge(left: Vec<Int>, right: Vec<Int>) -> Vec<Int> {
         let mut result = Vec::with_capacity(left.len() + right.len());
         let mut left = left;
         let mut right = right;
@@ -35,7 +37,7 @@ fn merge_sort(arr: &mut [i32]) {
         }
         result
     }
-    fn merge_recurse(arr: Vec<i32>) -> Vec<i32> {
+    fn merge_recurse(arr: Vec<Int>) -> Vec<Int> {
         let len = arr.len();
         if len <= 1 {
             arr
@@ -53,21 +55,21 @@ fn merge_sort(arr: &mut [i32]) {
         .for_each(|(i, value)| *value = result[i]);
 }
 
-fn lfsr_fib() -> i32 {
-    const START_STATE: i32 = 0xAFD2;
+fn lfsr_fib() -> Int {
+    const START_STATE: i32 = 0x3A;
     static mut LFSR: i32 = START_STATE;
     let bit;
 
     unsafe {
         bit = ((LFSR >> 0) ^ (LFSR >> 2) ^ (LFSR >> 3) ^ (LFSR >> 5)) & 1;
         LFSR = (LFSR >> 1) | (bit << 15);
-        return LFSR;
+        return LFSR as Int;
     }
 }
 
 fn benchmark_sorting<F>(n: usize, runs: usize, algorithm: F) -> u128
 where
-    F: Fn(&mut [i32]) -> (),
+    F: Fn(&mut [Int]) -> (),
 {
     let mut times = Vec::with_capacity(runs);
     for _ in 0..runs {
