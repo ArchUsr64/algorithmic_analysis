@@ -8,16 +8,23 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - name: File Creation
-        run: timedatectl > temp_file
+    steps: 
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Install Nightly
+        uses: actions-rs/toolchain@v1.0.6
+        with:
+              toolchain: nightly
+              override: true
+      - name: Algorithm Execution
+        run: cargo run --release
+      - name: Install python dependencies
+        run: pip install matplotlib
+      - name: Graph Creation
+        run: python generate_graph.py
       - name: Write the ssh-key
         run: |
               echo '${{ secrets.SSH_PRIVATE_KEY }}' > private_key
               chmod 600 private_key
-      - name: Verify file existence
-        run: |
-              cat temp_file
-              wc private_key
       - name: Copy file to AWS
-        run: scp -i private_key -o StrictHostKeyChecking=no temp_file ${{ vars.SERVER_HOSTNAME }}@${{ vars.SERVER_IP }}:${{ vars.SERVER_HOME }}
+        run: scp -i private_key -o StrictHostKeyChecking=no plot.png ${{ vars.SERVER_HOSTNAME }}@${{ vars.SERVER_IP }}:${{ vars.SERVER_HOME }}
