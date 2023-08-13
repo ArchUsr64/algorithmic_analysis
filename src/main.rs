@@ -6,6 +6,17 @@ type Int = usize;
 
 const OUT_PATH: &'static str = "data.csv";
 
+fn bogo_sort(arr: &mut [Int]) {
+    loop {
+        let i_1 = lfsr_fib() % arr.len();
+        let i_2 = lfsr_fib() % arr.len();
+        arr.swap(i_1, i_2);
+        if (arr.is_sorted()) {
+            break;
+        }
+    }
+}
+
 fn quick_sort(arr: &mut [Int]) {
     if arr.len() == 1 {
         return;
