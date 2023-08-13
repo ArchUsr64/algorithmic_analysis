@@ -113,14 +113,17 @@ fn main() {
             },
         }
     };
-    let sample_points = [10, 20, 40, 80, 100, 1_000, 2_000, 4_000, 8_000, 10_000];
+    let sample_points = [
+        10, 20, 40, 80, 100, 200, 400, 800, 1_000, 2_000, 4_000, 8_000, 10_000, 20_000, 40_000,
+        80_000, 100_000,
+    ];
     let mut execution_times = Vec::new();
     let algorithm_name = ("Merge sort", "Bubble sort");
     let runs = 3;
     for n in sample_points {
         let temp_output = (
-            benchmark_sorting(n, runs, merge_sort),
-            benchmark_sorting(n, runs, bubble_sort),
+            benchmark_sorting(n, runs, |x| x.sort_unstable()),
+            benchmark_sorting(n, runs, |x| x.sort()),
         );
         execution_times.push(temp_output);
     }
