@@ -38,6 +38,37 @@ fn quick_sort(arr: &mut [Int]) {
     }
 }
 
+fn quick_sort_better_locality(arr: &mut [Int]) {
+    if arr.len() == 1 {
+        return;
+    }
+    match arr.first() {
+        Some(first_element) => {
+            let pivot = *first_element;
+            let mut smaller_portion = 1;
+            let mut larger_portion = smaller_portion;
+            loop {
+                if larger_portion == arr.len() {
+                    break;
+                }
+                if arr[smaller_portion] < pivot {
+                    smaller_portion += 1;
+                    larger_portion += 1;
+                } else if arr[larger_portion] >= pivot {
+                    larger_portion += 1;
+                } else {
+                    arr.swap(smaller_portion, larger_portion);
+                }
+            }
+            let pivot_new_index = smaller_portion - 1;
+            arr.swap(0, pivot_new_index);
+            quick_sort_better_locality(&mut arr[..=pivot_new_index]);
+            quick_sort_better_locality(&mut arr[pivot_new_index + 1..]);
+        }
+        None => return,
+    }
+}
+
 fn bubble_sort(arr: &mut [Int]) {
     let len = arr.len();
     for i in 0..len {
@@ -159,6 +190,7 @@ fn main() {
         "Merge Sort",
         "Bubble Sort",
         "Quick Sort",
+        "Quick Sort (Better Locality Partitioning)",
     ];
     let runs = 50;
     for n in sample_points {
@@ -168,6 +200,7 @@ fn main() {
             benchmark_sorting(n, runs, merge_sort),
             benchmark_sorting(n, runs, bubble_sort),
             benchmark_sorting(n, runs, quick_sort),
+            benchmark_sorting(n, runs, quick_sort_better_locality),
         ];
         assert!(algorithm_name.len() == temp_output.len());
         execution_times.push(temp_output);

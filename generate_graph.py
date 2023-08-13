@@ -36,7 +36,8 @@ def random_color():
     return color
 
 fig, ax = pyplot.subplots()
-[ax.plot(x, y, f'{random_color()}') for y in  ys]
-pyplot.legend(algorithms)
+[ax.plot(x, y, c=f'{random_color()}', label="x1") for y in  ys]
+
+pyplot.legend(algorithms, fontsize="4")
 
 pyplot.savefig("plot.png", dpi=500)
