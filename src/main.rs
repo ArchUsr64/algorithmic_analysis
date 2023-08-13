@@ -6,6 +6,38 @@ type Int = usize;
 
 const OUT_PATH: &'static str = "data.csv";
 
+fn quick_sort(arr: &mut [Int]) {
+    if arr.len() == 1 {
+        return;
+    }
+    match arr.first() {
+        Some(first_element) => {
+            let pivot = *first_element;
+            let mut smaller_index = 1;
+            let mut larger_index = arr.len() - 1;
+            loop {
+                if smaller_index > larger_index {
+                    break;
+                }
+                if arr[smaller_index] > pivot && arr[larger_index] < pivot {
+                    arr.swap(smaller_index, larger_index);
+                }
+                if arr[smaller_index] <= pivot {
+                    smaller_index += 1;
+                }
+                if arr[larger_index] >= pivot {
+                    larger_index -= 1;
+                }
+            }
+            let pivot_new_index = larger_index;
+            arr.swap(0, pivot_new_index);
+            quick_sort(&mut arr[..=pivot_new_index]);
+            quick_sort(&mut arr[pivot_new_index + 1..]);
+        }
+        None => return,
+    }
+}
+
 fn bubble_sort(arr: &mut [Int]) {
     let len = arr.len();
     for i in 0..len {
@@ -121,15 +153,23 @@ fn main() {
     };
     let sample_points = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
     let mut execution_times = Vec::new();
-    let algorithm_name = ["Unstable Sort", "Stable Sort", "Merge Sort", "Bubble Sort"];
-    let runs = 8;
+    let algorithm_name = [
+        "Unstable Sort",
+        "Stable Sort",
+        "Merge Sort",
+        "Bubble Sort",
+        "Quick Sort",
+    ];
+    let runs = 50;
     for n in sample_points {
         let temp_output = vec![
             benchmark_sorting(n, runs, |x| x.sort_unstable()),
             benchmark_sorting(n, runs, |x| x.sort()),
             benchmark_sorting(n, runs, merge_sort),
             benchmark_sorting(n, runs, bubble_sort),
+            benchmark_sorting(n, runs, quick_sort),
         ];
+        assert!(algorithm_name.len() == temp_output.len());
         execution_times.push(temp_output);
     }
     generate_report(output, &sample_points, &algorithm_name, &execution_times);
