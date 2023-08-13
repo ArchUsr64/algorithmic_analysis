@@ -41,8 +41,6 @@ fn merge_sort(arr: &mut [Int]) {
         let len = arr.len();
         if len <= 1 {
             arr
-        } else if len == 2 {
-            vec![arr[0].min(arr[1]), arr[1].max(arr[0])]
         } else {
             let left = arr[..len / 2].to_vec();
             let right = arr[len / 2..].to_vec();
