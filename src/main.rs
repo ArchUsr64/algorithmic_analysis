@@ -148,6 +148,17 @@ where
     times[runs / 2]
 }
 
+fn bogo_sort(arr: &mut [Int]){
+    loop{
+        let i_1 = lfsr_fib() % arr.len();
+        let i_2 = lfsr_fib() % arr.len();
+        arr.swap(i_1, i_2);
+        if (arr.is_sorted()) {
+            break;
+        }
+    }
+}
+
 fn generate_report<T: io::Write>(
     output: &mut T,
     sample_points: &[usize],
@@ -182,7 +193,7 @@ fn main() {
             },
         }
     };
-    let sample_points = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
+    let sample_points = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     let mut execution_times = Vec::new();
     let algorithm_name = [
         "Unstable Sort",
@@ -191,8 +202,9 @@ fn main() {
         "Bubble Sort",
         "Quick Sort",
         "Quick Sort (Better Locality Partitioning)",
+        "Bogo",
     ];
-    let runs = 50;
+    let runs = 5;
     for n in sample_points {
         let temp_output = vec![
             benchmark_sorting(n, runs, |x| x.sort_unstable()),
@@ -201,6 +213,7 @@ fn main() {
             benchmark_sorting(n, runs, bubble_sort),
             benchmark_sorting(n, runs, quick_sort),
             benchmark_sorting(n, runs, quick_sort_better_locality),
+            benchmark_sorting(n, runs, bogo_sort),
         ];
         assert!(algorithm_name.len() == temp_output.len());
         execution_times.push(temp_output);
