@@ -85,17 +85,23 @@ where
     times[runs / 2]
 }
 
-fn generate_report<T>(
+fn generate_report<T: io::Write>(
     output: &mut T,
     sample_points: &[usize],
-    algorithm_name: (&'static str, &'static str),
-    execution_times: &[(u128, u128)],
-) where
-    T: io::Write,
-{
-    writeln!(output, "N,{},{}", algorithm_name.0, algorithm_name.1).unwrap();
-    for (n, (time_1, time_2)) in sample_points.iter().zip(execution_times.iter()) {
-        writeln!(output, "{n},{time_1},{time_2}").unwrap();
+    algorithm_name: &[&'static str],
+    execution_times: &[Vec<u128>],
+) {
+    write!(output, "N").unwrap();
+    algorithm_name
+        .iter()
+        .for_each(|name| write!(output, ",{}", name).unwrap());
+    writeln!(output).unwrap();
+    for (n, sample_times) in sample_points.iter().zip(execution_times.iter()) {
+        write!(output, "{n}").unwrap();
+        sample_times
+            .iter()
+            .for_each(|time| write!(output, ",{}", time).unwrap());
+        writeln!(output).unwrap();
     }
 }
 
@@ -113,19 +119,18 @@ fn main() {
             },
         }
     };
-    let sample_points = [
-        10, 20, 40, 80, 100, 200, 400, 800, 1_000, 2_000, 4_000, 8_000, 10_000, 20_000, 40_000,
-        80_000, 100_000,
-    ];
+    let sample_points = [5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
     let mut execution_times = Vec::new();
-    let algorithm_name = ("Merge sort", "Bubble sort");
-    let runs = 3;
+    let algorithm_name = ["Unstable Sort", "Stable Sort", "Merge Sort", "Bubble Sort"];
+    let runs = 8;
     for n in sample_points {
-        let temp_output = (
+        let temp_output = vec![
             benchmark_sorting(n, runs, |x| x.sort_unstable()),
             benchmark_sorting(n, runs, |x| x.sort()),
-        );
+            benchmark_sorting(n, runs, merge_sort),
+            benchmark_sorting(n, runs, bubble_sort),
+        ];
         execution_times.push(temp_output);
     }
-    generate_report(output, &sample_points, algorithm_name, &execution_times);
+    generate_report(output, &sample_points, &algorithm_name, &execution_times);
 }
